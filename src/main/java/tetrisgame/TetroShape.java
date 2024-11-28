@@ -48,12 +48,13 @@ public class TetroShape {
     }
 
     public void rotateClock(){
-        Coord[] newcoords = new Coord[3];
+        Coord[] newcoords = new Coord[4];
         for(int curr = 0; curr<4;curr++){
             Coord c = this.relative[curr];
             Coord make = new Coord(-c.getY(), c.getX());
-            newcoords[0] = make;
+            newcoords[curr] = make;
         }
+        this.relative = newcoords;
     }
 
     public Coord[] getRelative(){

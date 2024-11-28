@@ -11,19 +11,13 @@ public class Tetromino {
         O, I, S, L, J, T, Z
     }
     private int[] topleft;
-    private int[][] shape;
+    private TetroShape shape;
     private int lWidth;
     private int rWidth;
     private int height;
     private TetrisPanel TP;
     private Thread moveThread;
     private int orientation; //array of shapes method 
-
-    private void reverseCord(int[] cord){
-        int[] cordcopy = cord;
-        cord[0] = cord[1];
-        cord[1] = cordcopy[0];
-    }
 
     public void startMovementThread() {
         moveThread = new Thread(() -> {
@@ -43,9 +37,9 @@ public class Tetromino {
     public Tetromino(int i, int x, TetrisPanel t){
         active = false;
         shapePicker(i); //to make easy lines
-        this.lWidth = calcLwidth(this.shape);
-        this.rWidth = calcRwidth(this.shape);
-        this.height = calcheight(this.shape);
+        this.lWidth = calcLwidth(this.shape.getRelative());
+        this.rWidth = calcRwidth(this.shape.getRelative());
+        this.height = calcheight(this.shape.getRelative());
         color = Color.RED;
         this.topleft = new int[2];
         topleft[0] = x;
@@ -55,8 +49,8 @@ public class Tetromino {
     }
 
     public boolean isStopped(int[] offset, int[] start){
-        for(int[] cord : this.shape){
-            if(TP.getSquares()[start[1]+cord[1]+offset[1]][start[0]+cord[0]+offset[0]].isLocked()){ //if it hits a locked tetro it stops
+        for(Coord cord : this.shape.getRelative()){
+            if(TP.getSquares()[start[1]+cord.getY()+offset[1]][start[0]+cord.getX()+offset[0]].isLocked()){ //if it hits a locked tetro it stops
                 return true;
             }
         }
@@ -85,26 +79,26 @@ public class Tetromino {
         
     }
 
-    private int calcLwidth(int[][] shape){
+    private int calcLwidth(Coord[] shape){
         int min = 0;
-        for(int[] cord : shape){
-            min = (cord[0]<min) ? cord[0]:min;
+        for(Coord cord : shape){
+            min = (cord.getX()<min) ? cord.getX():min;
         }
         return -min;
     } 
 
-    private int calcRwidth(int[][] shape){
+    private int calcRwidth(Coord[] shape){
         int max = 0;
-        for(int[] cord : shape){
-            max = (cord[0]>max) ? cord[0]:max;
+        for(Coord cord : shape){
+            max = (cord.getX()>max) ? cord.getX():max;
         }
         return max;
     }
 
-    private int calcheight(int[][] shape){
+    private int calcheight(Coord[] shape){
         int max = 0;
-        for(int[] cord : shape){
-            max = (cord[1]>max) ? cord[1]:max;
+        for(Coord cord : shape){
+            max = (cord.getY()>max) ? cord.getY():max;
         }
         return max;
     }
@@ -116,8 +110,8 @@ public class Tetromino {
     }
 
     private void setSquares(){
-        for(int[] cord:shape){
-            TetrisSquare TS = TP.getSquares()[topleft[1]+cord[1]][topleft[0]+cord[0]];
+        for(Coord cord:shape.getRelative()){
+            TetrisSquare TS = TP.getSquares()[topleft[1]+cord.getY()][topleft[0]+cord.getX()];
             TS.setOccupied(true);
             TS.setColor(this.color);
             squares.add(TS);
@@ -125,17 +119,7 @@ public class Tetromino {
     }
 
     private void shapePicker(int i){
-        int[][][] shapes = 
-        {
-            {{0,0},{0,1},{1,0},{1,1}},
-            {{0,0},{0,1},{0,2},{0,3}},
-            {{0,0},{1,0},{-1,1},{0,1}},
-            {{0,0},{0,1},{0,2},{1,2}},
-            {{0,0},{0,1},{0,2},{-1,2}},
-            {{0,0},{1,0},{2,0},{1,1}},
-            {{0,0},{1,0},{1,1},{1,2}}
-        };
-        this.shape = shapes[i];
+        this.shape = new TetroShape(i); 
     }
     
     private void clearSquares(){
@@ -207,6 +191,19 @@ public class Tetromino {
                 setSquares();
                 this.TP.repaint();
                 }
+        );
+    }
+
+    public void rotate(){
+        SwingUtilities.invokeLater( ()->{
+            this.shape.rotateClock();
+            clearSquares();
+            setSquares();
+            this.lWidth = this.calcLwidth(null);
+            this.rWidth = this.calcRwidth(null);
+            this.TP.repaint();
+        }
+            
         );
     }
 

@@ -25,6 +25,10 @@ public class GameFrame extends JFrame{
                     break;
                 case KeyEvent.VK_SPACE:
                     TetrisBoard.currTetro.pushDown();
+                    break;
+                case KeyEvent.VK_UP:
+                    TetrisBoard.rotateTetro();
+                    break;
                 default:
                     break;
             }

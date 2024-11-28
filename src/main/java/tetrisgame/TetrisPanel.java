@@ -112,6 +112,18 @@ public class TetrisPanel extends JPanel{
         this.repaint();
     }
 
+    public void moveLeft(){
+        this.currTetro.moveLeft();
+    }
+
+    public void moveRight(){
+        this.currTetro.moveRight();
+    }
+
+    public void rotateTetro(){
+        this.currTetro.rotate();
+    }
+
     public TetrisSquare[][] getSquares(){
         return Squares;
     }
