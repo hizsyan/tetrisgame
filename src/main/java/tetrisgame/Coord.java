@@ -1,6 +1,8 @@
 package tetrisgame;
 
-public class Coord {
+import java.io.Serializable;
+
+public class Coord implements Serializable{
     private int x;
     private int y;
 
@@ -52,5 +54,18 @@ public class Coord {
 
     public int[] toArray(){
         return new int[]{this.x,this.y};
+    }
+
+    public void add(Coord xy){
+        this.x += xy.getX();
+        this.y += xy.getY();
+    }
+
+    public void pushX(int off){
+        this.x+=off;
+    }
+
+    public void pushY(int off){
+        this.y += off;
     }
 }

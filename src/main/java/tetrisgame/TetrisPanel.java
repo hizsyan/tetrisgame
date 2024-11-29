@@ -3,12 +3,12 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.io.Serializable;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.*;
 
-public class TetrisPanel extends JPanel{
-    private GameFrame Game;
+public class TetrisPanel extends JPanel implements Serializable{
     protected TetrisSquare[][] Squares = new TetrisSquare[20][10];
     protected Color base; 
     protected Tetromino currTetro;
@@ -18,6 +18,7 @@ public class TetrisPanel extends JPanel{
     private int squareHeight;
     private int score;
     private boolean gameOn;
+    private boolean paused;
 
     private void initSquares(){
         for(int row = 0; row<20; row++){
@@ -28,7 +29,6 @@ public class TetrisPanel extends JPanel{
     }
 
     public TetrisPanel(GameFrame G){
-        Game = G;
         R = new Random();
         this.setSize(300,600);
         this.squareHeight = 19;
@@ -39,6 +39,7 @@ public class TetrisPanel extends JPanel{
         this.base = new Color(0,0,0);
         this.gameOn = true;
         this.score = 0;
+        this.paused = false;
     }
 
     @Override
@@ -85,7 +86,7 @@ public class TetrisPanel extends JPanel{
         }
     }
 
-    public void deleteRow(int i){
+  /*  public void deleteRow(int i){
         for(int row = i; row>0;row--){
             this.Squares[row] = this.Squares[row-1];
         }
@@ -93,6 +94,34 @@ public class TetrisPanel extends JPanel{
         for(int col = 0; col<10; col++){
             Squares[0][col] = new TetrisSquare(0*30, col*30);
         }
+    }*/
+
+    public void deleteRow(int i) {
+        // Shift rows down
+        for (int row = i; row > 0; row--) {
+            for (int col = 0; col < this.squareWidth + 1; col++) {
+                Squares[row][col] = Squares[row - 1][col];
+                Squares[row][col].getPosition().setY(row * 30); // Update y-coordinate
+            }
+        }
+    
+        // Clear top row
+        for (int col = 0; col < this.squareWidth + 1; col++) {
+            Squares[0][col] = new TetrisSquare(0, col * 30);
+        }
+    
+        // Update score
+        score += 100;
+    }
+
+    public void pauseGame(){
+        this.paused = true;
+        this.currTetro.stopMovementThread();
+    }
+
+    public void resumeGame(){
+        this.paused = false;
+        this.currTetro.startMovementThread();
     }
 
     public void changeTetro(){
@@ -154,5 +183,9 @@ public class TetrisPanel extends JPanel{
 
     public boolean isGameOn(){
         return gameOn;
+    }
+
+    public boolean isPaused(){
+        return paused;
     }
 }

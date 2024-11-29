@@ -1,23 +1,23 @@
 package tetrisgame;
 import javax.swing.*;
+
+import tetrisgame.TetrisUtils.ShapeType;
+
 import java.awt.*;
+import java.io.Serializable;
 import java.util.*;
 
-public class Tetromino {
+public class Tetromino implements Serializable{
     private boolean active;
     private ArrayList<TetrisSquare> squares;
     private Color color;
-    private enum Shapes{
-        O, I, S, L, J, T, Z
-    }
-    private int[] topleft;
+    private Coord topleft;
     private TetroShape shape;
     private int lWidth;
     private int rWidth;
     private int height;
     private TetrisPanel TP;
     private Thread moveThread;
-    private int orientation; //array of shapes method 
 
     public void startMovementThread() {
         moveThread = new Thread(() -> {
@@ -40,21 +40,30 @@ public class Tetromino {
         this.lWidth = calcLwidth(this.shape.getRelative());
         this.rWidth = calcRwidth(this.shape.getRelative());
         this.height = calcheight(this.shape.getRelative());
-        color = Color.RED;
-        this.topleft = new int[2];
-        topleft[0] = x;
-        topleft[1] = 0;    
+        color = colorPicker(i);
+        this.topleft = new Coord(x,0);   
         TP = t;
         squares = new ArrayList<>();
     }
 
-    public boolean isStopped(int[] offset, int[] start){
+    public boolean isStopped(int[] offset, Coord start){
         for(Coord cord : this.shape.getRelative()){
-            if(TP.getSquares()[start[1]+cord.getY()+offset[1]][start[0]+cord.getX()+offset[0]].isLocked()){ //if it hits a locked tetro it stops
+            if(TP.getSquares()[start.getY()+cord.getY()+offset[1]][start.getX()+cord.getX()+offset[0]].isLocked()){ //if it hits a locked tetro it stops
                 return true;
             }
         }
         return false;
+    }
+
+    public boolean canRotate(){
+        TetroShape shapeCopy = this.shape;
+        shapeCopy.rotateClock();
+        for(Coord cord : shapeCopy.getRelative()){
+            if(TP.getSquares()[this.topleft.getY()+cord.getY()][this.topleft.getX() + cord.getX()].isLocked()){ 
+                return false;
+            }
+        }
+        return true;
     }
 
     public void stopMovementThread() {
@@ -65,18 +74,12 @@ public class Tetromino {
     }
 
     public void lockTetro(){
-        System.out.println("LOCKED!!!");
         for(TetrisSquare square : this.squares){
             square.lock();
         }
         this.active = false;
         this.stopMovementThread();
         TP.changeTetro();
-    }
-
-    public void turn(){
-        //hardcoded array of shapes and just increment index by 1 (index = index mod 4) or do matrix? operations every time?
-        
     }
 
     private int calcLwidth(Coord[] shape){
@@ -111,11 +114,15 @@ public class Tetromino {
 
     private void setSquares(){
         for(Coord cord:shape.getRelative()){
-            TetrisSquare TS = TP.getSquares()[topleft[1]+cord.getY()][topleft[0]+cord.getX()];
+            TetrisSquare TS = TP.getSquares()[topleft.getY()+cord.getY()][topleft.getX()+cord.getX()];
             TS.setOccupied(true);
             TS.setColor(this.color);
             squares.add(TS);
         }
+    }
+
+    private Color colorPicker(int i){
+        return TetrisUtils.getColorForShape(ShapeType.values()[i]);
     }
 
     private void shapePicker(int i){
@@ -133,12 +140,12 @@ public class Tetromino {
 
       public void moveDown() {
         int[] off = {0,1};
-        if(this.topleft[1]+height==TP.getSquareHeight() || (isStopped(off, this.topleft))){
+        if(this.topleft.getY()+height==TP.getSquareHeight() || (isStopped(off, this.topleft))){
             this.lockTetro();
             return;
         } 
         SwingUtilities.invokeLater(() -> {
-            this.topleft[1] += 1;
+            this.topleft.pushY(1);
             clearSquares();
             setSquares();
             TP.repaint();
@@ -149,11 +156,11 @@ public class Tetromino {
     public void moveRight(){
         int[] off = {1,0};
         SwingUtilities.invokeLater(()->{
-            if(this.topleft[0]+rWidth<this.TP.getSquareWidth()){
+            if(this.topleft.getX()+rWidth<this.TP.getSquareWidth()){
                 if(isStopped(off, this.topleft)){
                     return;
                 }
-                this.topleft[0] += 1;
+                this.topleft.pushX(1);
                 clearSquares();
                 setSquares();
                 this.TP.repaint();
@@ -165,11 +172,11 @@ public class Tetromino {
     public void moveLeft(){
         int[] off = {-1,0};
         SwingUtilities.invokeLater(()->{
-            if(this.topleft[0]-lWidth>0){
+            if(this.topleft.getX()-lWidth>0){
                 if(isStopped(off, this.topleft)){
                     return;
                 }
-                this.topleft[0] -= 1;
+                this.topleft.pushX(-1);
                 clearSquares();
                 setSquares();
                 this.TP.repaint();
@@ -179,13 +186,12 @@ public class Tetromino {
     }
 
     public void pushDown(){
-        int[] cordcopy = this.topleft;
+        Coord cordcopy = this.topleft;
         int[] off = new int[]{0,1};
-        while((this.height + cordcopy[1] < this.TP.getSquareHeight())&&!isStopped(off, cordcopy)){
-            cordcopy[1] += 1;
+        while((this.height + cordcopy.getY() < this.TP.getSquareHeight())&&!isStopped(off, cordcopy)){
+            cordcopy.setY(cordcopy.getY()+1);
         }
         SwingUtilities.invokeLater(()->{
-                System.out.println("PUSHED DOWN, current Y: " + this.topleft[1]);
                 this.topleft = cordcopy;
                 clearSquares();
                 setSquares();
@@ -195,23 +201,26 @@ public class Tetromino {
     }
 
     public void rotate(){
-        SwingUtilities.invokeLater( ()->{
-            this.shape.rotateClock();
-            clearSquares();
-            setSquares();
-            this.lWidth = this.calcLwidth(null);
-            this.rWidth = this.calcRwidth(null);
-            this.TP.repaint();
-        }
+        if(canRotate()){
+            SwingUtilities.invokeLater( ()->{
+                this.shape.rotateClock();
+                clearSquares();
+                setSquares();
+                this.lWidth = this.calcLwidth(this.shape.getRelative());
+                this.rWidth = this.calcRwidth(this.shape.getRelative());
+                this.height = this.calcheight(this.shape.getRelative());
+                this.TP.repaint();
+                }
             
-        );
+            );
+        }
     }
 
     public boolean getActive(){
         return this.active;
     }
 
-    public int[] getTopleft(){
+    public Coord getTopleft(){
         return this.topleft;
     }
 

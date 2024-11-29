@@ -1,24 +1,17 @@
 package tetrisgame;
 
-public class TetroShape {
+import java.io.Serializable;
+
+public class TetroShape implements Serializable{
     private Coord[] relative;
     private boolean[][] absolute;
 
     public TetroShape(int i){
-        int[][][] shapes = 
-        {
-            {{0,0},{0,1},{1,0},{1,1}},
-            {{0,0},{0,1},{0,2},{0,3}},
-            {{0,0},{1,0},{-1,1},{0,1}},
-            {{0,0},{0,1},{0,2},{1,2}},
-            {{0,0},{0,1},{0,2},{-1,2}},
-            {{0,0},{1,0},{2,0},{1,1}},
-            {{0,0},{1,0},{1,1},{1,2}}
-        };
+        int[][] shapeCoords = TetrisUtils.getShapeCoords(TetrisUtils.ShapeType.values()[i]);
         this.relative = new Coord[4];
         for(int j = 0; j<4;j++){
             try{
-                this.relative[j] = new Coord(shapes[i][j]);
+                this.relative[j] = new Coord(shapeCoords[j]);
             }
             catch(Exception e){}
         }
