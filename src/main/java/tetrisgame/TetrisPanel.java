@@ -9,16 +9,17 @@ import java.awt.event.ActionListener;
 import java.util.*;
 
 public class TetrisPanel extends JPanel implements Serializable{
-    protected TetrisSquare[][] Squares = new TetrisSquare[20][10];
-    protected Color base; 
+    protected TetrisSquare[][] Squares;
+    protected transient Color base; 
     protected Tetromino currTetro;
     protected Tetromino nextTetro;
-    private Random R;
+    private transient Random R;
     private int squareWidth; 
     private int squareHeight;
     private int score;
     private boolean gameOn;
-    private boolean paused;
+    private transient boolean paused;
+    private transient boolean updated;
 
     private void initSquares(){
         for(int row = 0; row<20; row++){
@@ -33,6 +34,7 @@ public class TetrisPanel extends JPanel implements Serializable{
         this.setSize(300,600);
         this.squareHeight = 19;
         this.squareWidth = 9;
+        this.Squares = new TetrisSquare[squareHeight+1][squareWidth+1];
         initSquares();
         currTetro = new Tetromino(R.nextInt(7), 5, this);
         nextTetro = new Tetromino(R.nextInt(7), 5, this);
@@ -40,6 +42,7 @@ public class TetrisPanel extends JPanel implements Serializable{
         this.gameOn = true;
         this.score = 0;
         this.paused = false;
+        this.updated = true;
     }
 
     @Override
@@ -86,16 +89,6 @@ public class TetrisPanel extends JPanel implements Serializable{
         }
     }
 
-  /*  public void deleteRow(int i){
-        for(int row = i; row>0;row--){
-            this.Squares[row] = this.Squares[row-1];
-        }
-        this.Squares[0] = new TetrisSquare[this.squareWidth+1];
-        for(int col = 0; col<10; col++){
-            Squares[0][col] = new TetrisSquare(0*30, col*30);
-        }
-    }*/
-
     public void deleteRow(int i) {
         // Shift rows down
         for (int row = i; row > 0; row--) {
@@ -112,6 +105,7 @@ public class TetrisPanel extends JPanel implements Serializable{
     
         // Update score
         score += 100;
+        this.updated = true;
     }
 
     public void pauseGame(){
@@ -127,6 +121,7 @@ public class TetrisPanel extends JPanel implements Serializable{
     public void changeTetro(){
         currTetro = nextTetro;
         nextTetro = new Tetromino(R.nextInt(7),5,this);
+        this.updated = true;
     }
 
     public void doFrame(){
@@ -188,4 +183,20 @@ public class TetrisPanel extends JPanel implements Serializable{
     public boolean isPaused(){
         return paused;
     }
+
+    public boolean isUpdated(){
+        return updated;
+    }
+    public void update(){
+        this.updated = false;
+    }
+
+    public void setCurrTetro(Tetromino T){
+        this.currTetro = T;
+    }
+
+    public void setNextTetro(Tetromino T){
+        this.nextTetro = T;
+    }
+
 }

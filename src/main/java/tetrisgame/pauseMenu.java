@@ -47,6 +47,13 @@ public class pauseMenu extends JFrame {
         this.setVisible(true); // Make the frame visible
     }
 
+    public void saveMenu(){
+        JPanel savePanel = new JPanel();
+        savePanel.setLayout(new BorderLayout());
+        savePanel.setSize(200,200);
+        setResizable(false);
+    }
+
     // Constructor
     public pauseMenu(GameFrame Game) {
         this.Game = Game; // Store the reference to the GameFrame

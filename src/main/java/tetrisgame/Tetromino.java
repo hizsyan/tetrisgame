@@ -17,7 +17,7 @@ public class Tetromino implements Serializable{
     private int rWidth;
     private int height;
     private TetrisPanel TP;
-    private Thread moveThread;
+    private transient Thread moveThread;
 
     public void startMovementThread() {
         moveThread = new Thread(() -> {
@@ -55,15 +55,27 @@ public class Tetromino implements Serializable{
         return false;
     }
 
-    public boolean canRotate(){
-        TetroShape shapeCopy = this.shape;
-        shapeCopy.rotateClock();
-        for(Coord cord : shapeCopy.getRelative()){
-            if(TP.getSquares()[this.topleft.getY()+cord.getY()][this.topleft.getX() + cord.getX()].isLocked()){ 
+    public boolean canRotate() {
+        TetroShape rotatedShape = new TetroShape(shape); // Clone the current shape
+        rotatedShape.rotateClock(); // Apply rotation to the copy
+    
+        // Check each square of the rotated shape for validity
+        for (Coord coord : rotatedShape.getRelative()) {
+            int newX = topleft.getX() + coord.getX();
+            int newY = topleft.getY() + coord.getY();
+    
+            // Check boundaries
+            if (newX < 0 || newX >= TP.getSquareWidth() || newY < 0 || newY >= TP.getSquareHeight()) {
+                return false;
+            }
+    
+            // Check for overlap with locked squares
+            if (TP.getSquares()[newY][newX].isLocked()) {
                 return false;
             }
         }
-        return true;
+    
+        return true; // All checks passed
     }
 
     public void stopMovementThread() {
@@ -115,7 +127,6 @@ public class Tetromino implements Serializable{
     private void setSquares(){
         for(Coord cord:shape.getRelative()){
             TetrisSquare TS = TP.getSquares()[topleft.getY()+cord.getY()][topleft.getX()+cord.getX()];
-            TS.setOccupied(true);
             TS.setColor(this.color);
             squares.add(TS);
         }
@@ -132,7 +143,6 @@ public class Tetromino implements Serializable{
     private void clearSquares(){
         for(TetrisSquare T:squares){
             T.setColor(TP.getBase());
-            T.setOccupied(false);
         }
         this.squares.clear();
     }   
@@ -246,6 +256,10 @@ public class Tetromino implements Serializable{
 
     public TetrisPanel getPanel(){
         return this.TP;
+    }
+
+    public TetroShape getShape(){
+        return this.shape;
     }
 
     public void setActive(boolean flag){

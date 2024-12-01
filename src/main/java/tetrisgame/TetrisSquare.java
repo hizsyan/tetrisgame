@@ -1,20 +1,21 @@
 package tetrisgame;
-import javax.swing.*;
 import java.awt.*;
 import java.io.Serializable;
-import java.util.*;
 
 public class TetrisSquare implements Serializable{
     private Coord position;
-    private boolean occupied;
     private Color color;
     private boolean locked;
     
     public TetrisSquare(int xX, int yY){
         this.position = new Coord(xX,yY);
-        occupied = false;
         color = TetrisUtils.BASE_COLOR;
         locked = false;
+    }
+
+    public TetrisSquare(TetrisSquare copy){
+        this.position = new Coord(copy.getX(), copy.getY());
+        color = copy.getColor();
     }
 
     public void setY(int y){
@@ -33,16 +34,8 @@ public class TetrisSquare implements Serializable{
         return this.position.getX();
     }
 
-    public boolean getStatus(){
-        return occupied;
-    }
-
     public Color getColor(){
         return color;
-    }
-    
-    public void setOccupied(boolean o){
-        occupied = o;
     }
 
     public void setColor(Color c){
