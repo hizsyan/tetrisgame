@@ -1,17 +1,20 @@
 package tetrisgame;
+
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.io.Serializable;
 
-public class TetrisHUD extends JPanel{
-    private JLabel scoreLabel = new JLabel("Score: 0");
-    private TetrisPanel Tetris;
+/**
+ * TetrisHUD is a graphical component that displays the current game status,
+ * including the score and a preview of the next tetromino.
+ */
+public class TetrisHUD extends JPanel {
+    private JLabel scoreLabel = new JLabel("Score: 0"); // Label to display the score
+    private TetrisPanel Tetris; // Reference to the Tetris game panel
 
-    JPanel nextTetrominoPanel = new JPanel() {
+    /**
+     * Panel to display the next tetromino. It overrides paintComponent to render the tetromino.
+     */
+    private JPanel nextTetrominoPanel = new JPanel() {
         @Override
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
@@ -29,17 +32,27 @@ public class TetrisHUD extends JPanel{
         }
     };
 
-    @Override 
-    protected void paintComponent(Graphics g){
+    /**
+     * Paints the TetrisHUD component, updating the score and next tetromino display.
+     *
+     * @param g The Graphics object used to render the component.
+     */
+    @Override
+    protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         this.drawNextTetromino();
         this.updateScore();
     }
 
-    public TetrisHUD(TetrisPanel T){
+    /**
+     * Constructs the TetrisHUD with a reference to the Tetris game panel.
+     *
+     * @param T The TetrisPanel object representing the game state.
+     */
+    public TetrisHUD(TetrisPanel T) {
         this.Tetris = T;
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        this.setPreferredSize(new Dimension(130, 600));       
+        this.setPreferredSize(new Dimension(130, 600));
         this.setBackground(Color.LIGHT_GRAY);
 
         // Score Label
@@ -64,15 +77,20 @@ public class TetrisHUD extends JPanel{
         this.add(Box.createVerticalGlue()); // Push content to the top
     }
 
+    /**
+     * Renders the next tetromino in the dedicated panel.
+     */
     public void drawNextTetromino() {
-        // Clear the panel
+        // Clear and repaint the next tetromino panel
         nextTetrominoPanel.removeAll();
         nextTetrominoPanel.revalidate();
         nextTetrominoPanel.repaint();
     }
 
+    /**
+     * Updates the score label with the current score from the TetrisPanel.
+     */
     public void updateScore() {
         scoreLabel.setText("Score: " + Tetris.getScore());
     }
-
 }

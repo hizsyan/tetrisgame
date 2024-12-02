@@ -8,195 +8,294 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.*;
 
-public class TetrisPanel extends JPanel implements Serializable{
-    protected TetrisSquare[][] Squares;
-    protected transient Color base; 
-    protected Tetromino currTetro;
-    protected Tetromino nextTetro;
-    private transient Random R;
-    private int squareWidth; 
-    private int squareHeight;
-    private int score;
-    private boolean gameOn;
-    private transient boolean paused;
-    private transient boolean updated;
+/**
+ * The TetrisPanel class represents the game board for a Tetris game.
+ * It handles the rendering of the board, the current and next Tetromino,
+ * as well as game logic like clearing rows and detecting game over conditions.
+ */
+public class TetrisPanel extends JPanel implements Serializable {
+    protected TetrisSquare[][] Squares; // 2D array of squares representing the board
+    protected transient Color base; // Base color for unoccupied squares
+    protected Tetromino currTetro; // The currently active Tetromino
+    protected Tetromino nextTetro; // The next Tetromino to be dropped
+    private transient Random R; // Random number generator for Tetromino selection
+    private int squareWidth; // Width of the board in squares
+    private int squareHeight; // Height of the board in squares
+    private int score; // The player's current score
+    private boolean gameOn; // Whether the game is currently active
+    private transient boolean paused; // Whether the game is paused
+    private transient boolean updated; // Whether the game state has been updated
 
-    private void initSquares(){
-        for(int row = 0; row<20; row++){
-            for(int col = 0; col<10; col++){
-                Squares[row][col] = new TetrisSquare(row*30, col*30);
+    /**
+     * Initializes the 2D array of Tetris squares.
+     */
+    private void initSquares() {
+        for (int row = 0; row < 20; row++) {
+            for (int col = 0; col < 10; col++) {
+                Squares[row][col] = new TetrisSquare(row * 30, col * 30);
             }
         }
     }
 
-    public TetrisPanel(GameFrame G){
-        R = new Random();
-        this.setSize(300,600);
+    /**
+     * Constructs a TetrisPanel with the specified game frame.
+     *
+     * @param G The GameFrame instance associated with this panel.
+     */
+    public TetrisPanel(GameFrame G) {
+        this.setSize(300, 600);
         this.squareHeight = 19;
         this.squareWidth = 9;
-        this.Squares = new TetrisSquare[squareHeight+1][squareWidth+1];
+        this.Squares = new TetrisSquare[squareHeight + 1][squareWidth + 1];
         initSquares();
+        initTrans();
         currTetro = new Tetromino(R.nextInt(7), 5, this);
         nextTetro = new Tetromino(R.nextInt(7), 5, this);
-        this.base = new Color(0,0,0);
         this.gameOn = true;
         this.score = 0;
-        this.paused = false;
-        this.updated = true;
     }
 
+    /**
+     * Initializes transient fields after deserialization.
+     */
+    public void initTrans() {
+        R = new Random();
+        this.paused = false;
+        this.updated = true;
+        this.base = TetrisUtils.BASE_COLOR;
+    }
+
+    /**
+     * Paints the Tetris game board.
+     *
+     * @param g The Graphics object used to render the board.
+     */
     @Override
-    protected void paintComponent(Graphics g){
+    protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        for(int row = 0; row<20; row++){
-            for(int col = 0; col<10; col++){
+        for (int row = 0; row < 20; row++) {
+            for (int col = 0; col < 10; col++) {
                 Color currcolor = Squares[row][col].getColor();
                 g.setColor(currcolor);
-                g.fillRect(30*col, 30*row, 30, 30);
+                g.fillRect(30 * col, 30 * row, 30, 30);
             }
         }
         g.setColor(Color.white);
-        for (int col = 1; col<10;col++){
-            g.drawLine(col*30, 0, col*30, 600);
+        for (int col = 1; col < 10; col++) {
+            g.drawLine(col * 30, 0, col * 30, 600);
         }
-        for (int row = 1; row<20; row++){
-            g.drawLine(0, row*30, 300, row*30);
+        for (int row = 1; row < 20; row++) {
+            g.drawLine(0, row * 30, 300, row * 30);
         }
     }
 
-    public boolean isLost(){
-        for(TetrisSquare square : this.Squares[0]){
-            if(square.isLocked()){
+    /**
+     * Checks if the game is lost (when a locked square is in the top row).
+     *
+     * @return True if the game is lost, false otherwise.
+     */
+    public boolean isLost() {
+        for (TetrisSquare square : this.Squares[0]) {
+            if (square.isLocked()) {
                 return true;
             }
         }
         return false;
     }
-    
-    public void checkRows(){
+
+    /**
+     * Checks and clears full rows, updating the score.
+     */
+    public void checkRows() {
         int counter = 0;
-        for(TetrisSquare[] row : this.Squares){
+        for (TetrisSquare[] row : this.Squares) {
             boolean full = true;
-            for(TetrisSquare currSq : row){
-                if(!currSq.isLocked()){
+            for (TetrisSquare currSq : row) {
+                if (!currSq.isLocked()) {
                     full = false;
                 }
             }
-            if(full){
+            if (full) {
                 deleteRow(counter);
             }
             counter++;
         }
     }
 
+    /**
+     * Deletes a full row and shifts rows above it down.
+     *
+     * @param i The index of the row to delete.
+     */
     public void deleteRow(int i) {
-        // Shift rows down
         for (int row = i; row > 0; row--) {
             for (int col = 0; col < this.squareWidth + 1; col++) {
                 Squares[row][col] = Squares[row - 1][col];
                 Squares[row][col].getPosition().setY(row * 30); // Update y-coordinate
             }
         }
-    
-        // Clear top row
+
         for (int col = 0; col < this.squareWidth + 1; col++) {
             Squares[0][col] = new TetrisSquare(0, col * 30);
         }
-    
-        // Update score
-        score += 100;
+
+        score += 100; // Increase score
         this.updated = true;
     }
 
-    public void pauseGame(){
+    /**
+     * Pauses the game and stops the current Tetromino's movement.
+     */
+    public void pauseGame() {
         this.paused = true;
         this.currTetro.stopMovementThread();
     }
 
-    public void resumeGame(){
+    /**
+     * Resumes the game and restarts the current Tetromino's movement.
+     */
+    public void resumeGame() {
         this.paused = false;
         this.currTetro.startMovementThread();
     }
 
-    public void changeTetro(){
+    /**
+     * Replaces the current Tetromino with the next one and generates a new next Tetromino.
+     */
+    public void changeTetro() {
         currTetro = nextTetro;
-        nextTetro = new Tetromino(R.nextInt(7),5,this);
+        nextTetro = new Tetromino(R.nextInt(7), 5, this);
         this.updated = true;
     }
 
-    public void doFrame(){
-        if(isLost()){
+    /**
+     * Advances the game frame by moving the Tetromino and checking rows.
+     */
+    public void doFrame() {
+        if (isLost()) {
             this.gameOn = false;
             return;
         }
-        if(!currTetro.getActive()){
+        if (!currTetro.getActive()) {
             currTetro.activate();
         }
         checkRows();
         this.repaint();
     }
 
-    public void moveLeft(){
+    /**
+     * Moves the current Tetromino to the left.
+     */
+    public void moveLeft() {
         this.currTetro.moveLeft();
     }
 
-    public void moveRight(){
+    /**
+     * Moves the current Tetromino to the right.
+     */
+    public void moveRight() {
         this.currTetro.moveRight();
     }
 
-    public void rotateTetro(){
+    /**
+     * Rotates the current Tetromino clockwise.
+     */
+    public void rotateTetro() {
         this.currTetro.rotate();
     }
 
-    public TetrisSquare[][] getSquares(){
+    /**
+     * @return The 2D array of Tetris squares.
+     */
+    public TetrisSquare[][] getSquares() {
         return Squares;
     }
 
-    public Tetromino getCurrTetro(){
+    /**
+     * @return The currently active Tetromino.
+     */
+    public Tetromino getCurrTetro() {
         return currTetro;
     }
 
-    public Tetromino getNextTetro(){
-        return nextTetro;
-    }
-
-    public Color getBase(){
-        return base;
-    }
-
-    public int getSquareWidth(){
-        return squareWidth;
-    }
-
-    public int getSquareHeight(){
-        return squareHeight;
-    }
-
-    public int getScore(){
-        return score;
-    }
-
-    public boolean isGameOn(){
-        return gameOn;
-    }
-
-    public boolean isPaused(){
-        return paused;
-    }
-
-    public boolean isUpdated(){
-        return updated;
-    }
-    public void update(){
-        this.updated = false;
-    }
-
-    public void setCurrTetro(Tetromino T){
+    /**
+     * Sets the current Tetromino.
+     *
+     * @param T The Tetromino to set as current.
+     */
+    public void setCurrTetro(Tetromino T) {
         this.currTetro = T;
     }
 
-    public void setNextTetro(Tetromino T){
+    /**
+     * @return The next Tetromino to be dropped.
+     */
+    public Tetromino getNextTetro() {
+        return nextTetro;
+    }
+
+    /**
+     * Sets the next Tetromino to be dropped.
+     *
+     * @param T The Tetromino to set as next.
+     */
+    public void setNextTetro(Tetromino T) {
         this.nextTetro = T;
     }
 
+    /**
+     * @return The base color for unoccupied squares.
+     */
+    public Color getBase() {
+        return base;
+    }
+
+    /**
+     * @return The width of the board in squares.
+     */
+    public int getSquareWidth() {
+        return squareWidth;
+    }
+
+    /**
+     * @return The height of the board in squares.
+     */
+    public int getSquareHeight() {
+        return squareHeight;
+    }
+
+    /**
+     * @return The player's current score.
+     */
+    public int getScore() {
+        return score;
+    }
+
+    /**
+     * @return True if the game is active, false otherwise.
+     */
+    public boolean isGameOn() {
+        return gameOn;
+    }
+
+    /**
+     * @return True if the game is paused, false otherwise.
+     */
+    public boolean isPaused() {
+        return paused;
+    }
+
+    /**
+     * @return True if the game state has been updated, false otherwise.
+     */
+    public boolean isUpdated() {
+        return updated;
+    }
+
+    /**
+     * Marks the game state as no longer updated.
+     */
+    public void update() {
+        this.updated = false;
+    }
 }

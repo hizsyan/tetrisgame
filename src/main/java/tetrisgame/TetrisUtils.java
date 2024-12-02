@@ -3,16 +3,25 @@ package tetrisgame;
 import java.awt.Color;
 import java.util.HashMap;
 
+/**
+ * Utility class for managing Tetris game constants and utility methods.
+ * This class includes color mappings for shapes, shape definitions, and other game constants.
+ */
 public class TetrisUtils {
 
-    // Enum for Tetris shapes
+    /**
+     * Enum representing the types of Tetris shapes.
+     */
     public enum ShapeType {
         O, I, S, L, J, T, Z
     }
 
-    // HashMap for Colors
+    /**
+     * HashMap for storing colors corresponding to each Tetris shape type.
+     */
     public static final HashMap<ShapeType, Color> SHAPE_COLORS = new HashMap<>();
 
+    // Static initializer block for setting up shape colors
     static {
         SHAPE_COLORS.put(ShapeType.O, Color.YELLOW);
         SHAPE_COLORS.put(ShapeType.I, new Color(0, 100, 150)); // Teal
@@ -23,7 +32,10 @@ public class TetrisUtils {
         SHAPE_COLORS.put(ShapeType.Z, new Color(220, 20, 170)); // Purple
     }
 
-    // Example Shapes Definition
+    /**
+     * Array containing the relative coordinates of each shape type.
+     * Each shape is defined as an array of 2D coordinates relative to its origin.
+     */
     public static final int[][][] shapes = {
         { {0, 0}, {0, 1}, {1, 0}, {1, 1} },  // O
         { {0, 0}, {0, 1}, {0, 2}, {0, 3} },  // I
@@ -34,16 +46,33 @@ public class TetrisUtils {
         { {0, 0}, {1, 0}, {1, 1}, {1, 2} }   // Z
     };
 
-    // Utility method for retrieving colors
+    /**
+     * Retrieves the color associated with a given Tetris shape type.
+     *
+     * @param shape The shape type whose color is to be retrieved.
+     * @return The color associated with the specified shape type.
+     */
     public static Color getColorForShape(ShapeType shape) {
         return SHAPE_COLORS.get(shape);
     }
 
-    // Utility method for retrieving shapes
+    /**
+     * Retrieves the coordinates of the blocks forming a given Tetris shape.
+     *
+     * @param shape The shape type whose coordinates are to be retrieved.
+     * @return A 2D array representing the relative coordinates of the shape's blocks.
+     */
     public static int[][] getShapeCoords(ShapeType shape) {
         return shapes[shape.ordinal()];
     }
 
-    public static final Color BASE_COLOR = Color.BLACK; // Default base/background color
-    public static final Color GRID_LINE_COLOR = Color.WHITE; // Grid line color
+    /**
+     * The default base/background color for the Tetris grid.
+     */
+    public static final Color BASE_COLOR = Color.BLACK;
+
+    /**
+     * The color of the grid lines on the Tetris board.
+     */
+    public static final Color GRID_LINE_COLOR = Color.WHITE;
 }

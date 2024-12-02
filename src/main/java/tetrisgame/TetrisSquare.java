@@ -1,64 +1,131 @@
 package tetrisgame;
+
 import java.awt.*;
 import java.io.Serializable;
 
-public class TetrisSquare implements Serializable{
-    private Coord position;
-    private Color color;
-    private boolean locked;
-    
-    public TetrisSquare(int xX, int yY){
-        this.position = new Coord(xX,yY);
+/**
+ * Represents a single square in the Tetris game grid.
+ * Each square has a position, a color, and a lock state indicating if it is part of a locked Tetromino.
+ */
+public class TetrisSquare implements Serializable {
+    private Coord position; // The position of the square on the grid
+    private Color color; // The color of the square
+    private boolean locked; // Whether the square is locked (part of a completed line or Tetromino)
+
+    /**
+     * Constructs a TetrisSquare at the specified position with the base color.
+     *
+     * @param xX The x-coordinate of the square.
+     * @param yY The y-coordinate of the square.
+     */
+    public TetrisSquare(int xX, int yY) {
+        this.position = new Coord(xX, yY);
         color = TetrisUtils.BASE_COLOR;
         locked = false;
     }
 
-    public TetrisSquare(TetrisSquare copy){
+    /**
+     * Constructs a copy of another TetrisSquare.
+     *
+     * @param copy The TetrisSquare to copy.
+     */
+    public TetrisSquare(TetrisSquare copy) {
         this.position = new Coord(copy.getX(), copy.getY());
         color = copy.getColor();
     }
 
-    public void setY(int y){
+    /**
+     * Sets the y-coordinate of the square.
+     *
+     * @param y The new y-coordinate.
+     */
+    public void setY(int y) {
         this.position.setY(y);
     }
 
-    public int getY(){
+    /**
+     * Gets the y-coordinate of the square.
+     *
+     * @return The y-coordinate.
+     */
+    public int getY() {
         return this.position.getY();
     }
 
-    public void setX(int x){
+    /**
+     * Sets the x-coordinate of the square.
+     *
+     * @param x The new x-coordinate.
+     */
+    public void setX(int x) {
         this.position.setX(x);
     }
 
-    public int getX(){
+    /**
+     * Gets the x-coordinate of the square.
+     *
+     * @return The x-coordinate.
+     */
+    public int getX() {
         return this.position.getX();
     }
 
-    public Color getColor(){
+    /**
+     * Gets the color of the square.
+     *
+     * @return The current color of the square.
+     */
+    public Color getColor() {
         return color;
     }
 
-    public void setColor(Color c){
+    /**
+     * Sets the color of the square.
+     *
+     * @param c The new color.
+     */
+    public void setColor(Color c) {
         color = c;
     }
 
-    public Coord getPosition(){
+    /**
+     * Gets the position of the square.
+     *
+     * @return The position as a Coord object.
+     */
+    public Coord getPosition() {
         return this.position;
     }
 
-    public void setPosition(Coord co){
+    /**
+     * Sets the position of the square.
+     *
+     * @param co The new position as a Coord object.
+     */
+    public void setPosition(Coord co) {
         this.position = co;
     }
 
-    public void lock(){
+    /**
+     * Locks the square, indicating it is part of a completed line or Tetromino.
+     */
+    public void lock() {
         this.locked = true;
     }
 
-    public void unlock(){
+    /**
+     * Unlocks the square, making it available for new Tetrominoes.
+     */
+    public void unlock() {
         this.locked = false;
     }
 
-    public boolean isLocked(){
+    /**
+     * Checks if the square is locked.
+     *
+     * @return True if the square is locked, false otherwise.
+     */
+    public boolean isLocked() {
         return locked;
     }
 }

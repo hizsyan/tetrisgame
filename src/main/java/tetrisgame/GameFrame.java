@@ -1,30 +1,30 @@
 package tetrisgame;
+
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
-import java.util.*;
+import java.io.*;
+import java.util.Random;
 
-public class GameFrame extends JFrame{
+/**
+ * The main frame of the Tetris game. Manages the game board, HUD, 
+ * game state, and user interactions.
+ */
+public class GameFrame extends JFrame {
     private TetrisPanel TetrisBoard;
     private TetrisHUD HUD;
     private Random random;
     private javax.swing.Timer gameTimer;
-    private transient String savePath;
+    private String savePath;
 
-    class MyKeyListener extends KeyAdapter{
+    /**
+     * Key listener for handling user input during the game.
+     */
+    class MyKeyListener extends KeyAdapter {
         @Override
-        public void keyPressed(KeyEvent k){
-            switch (k.getKeyCode()){
+        public void keyPressed(KeyEvent k) {
+            switch (k.getKeyCode()) {
                 case KeyEvent.VK_RIGHT:
                     TetrisBoard.currTetro.moveRight();
                     break;
@@ -46,119 +46,190 @@ public class GameFrame extends JFrame{
         }
     }
 
-    public Random getRandom(){
+    /**
+     * Gets the random number generator used by the game.
+     *
+     * @return A {@link Random} instance.
+     */
+    public Random getRandom() {
         return random;
     }
 
-    public GameFrame(){
+    /**
+     * Initializes basic configurations for the game frame.
+     */
+    public void initBasic() {
         random = new Random();
         setTitle("Active Game");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setSize(450,800);
+        setSize(450, 800);
         setResizable(false);
-        this.TetrisBoard = new TetrisPanel(this);
-        this.addKeyListener(new MyKeyListener());
-        this.setLayout(new BorderLayout());
-        this.add(TetrisBoard, BorderLayout.CENTER); // Add the Tetris game board to the center
-        this.HUD = new TetrisHUD(TetrisBoard);
-        this.add(HUD, BorderLayout.EAST); // Add the HUD to the right side (EAST)
-        this.drawHUD();
-        this.setVisible(true);
         this.savePath = System.getProperty("user.dir") + File.separator + "resources" + File.separator + "saves";
+        this.setLayout(new BorderLayout());
     }
 
-    public void resume(){
+    /**
+     * Initializes and attaches the HUD to the game frame.
+     */
+    public void initHUD() {
+        this.HUD = new TetrisHUD(TetrisBoard);
+        this.add(HUD, BorderLayout.EAST);
+        this.drawHUD();
+    }
+
+    /**
+     * Constructs a new game frame with a fresh game board.
+     */
+    public GameFrame() {
+        initBasic();
+        this.TetrisBoard = new TetrisPanel(this);
+        this.addKeyListener(new MyKeyListener());
+        this.add(TetrisBoard, BorderLayout.CENTER);
+        initHUD();
+    }
+
+    /**
+     * Constructs a game frame by loading a previously saved game state.
+     *
+     * @param filename The name of the file containing the saved game state.
+     */
+    public GameFrame(String filename) {
+        initBasic();
+        loadGame(filename);
+        this.addKeyListener(new MyKeyListener());
+        this.add(TetrisBoard, BorderLayout.CENTER);
+        initHUD();
+    }
+
+    /**
+     * Resumes the game after being paused.
+     */
+    public void resume() {
         this.gameTimer.start();
         this.TetrisBoard.resumeGame();
     }
 
-    private void gameOver(){
-     // Stop the game timer
+    /**
+     * Ends the game and displays a Game Over message.
+     */
+    private void gameOver() {
         this.gameTimer.stop();
 
-     // Create Game Over message
         JLabel overLabel = new JLabel("Game Over! Score: " + this.TetrisBoard.getScore(), SwingConstants.CENTER);
         overLabel.setFont(new Font("Arial", Font.BOLD, 20));
         overLabel.setOpaque(true);
         overLabel.setBackground(Color.BLACK);
         overLabel.setForeground(Color.GREEN);
- 
-     // Clear existing components and set layout
-        this.getContentPane().removeAll(); // Remove all components from the JFrame
-        this.setLayout(new BorderLayout()); // Set layout for new components
- 
-     // Add the Game Over label
+
+        this.getContentPane().removeAll();
+        this.setLayout(new BorderLayout());
         this.add(overLabel, BorderLayout.CENTER);
- 
-     // Revalidate and repaint to refresh the frame
+
         this.revalidate();
         this.repaint();
- }
+    }
 
-    public void drawPauseMenu(){
-        pauseMenu PM = new pauseMenu(this);
+    /**
+     * Displays the pause menu.
+     */
+    public void drawPauseMenu() {
+        PauseMenu PM = new PauseMenu(this);
         PM.display();
     }
 
-    public void drawHUD(){
+    /**
+     * Ensures the HUD is visible and properly displayed.
+     */
+    public void drawHUD() {
         this.HUD.setVisible(true);
     }
 
+    /**
+     * Updates the HUD based on changes in the game state.
+     */
     public void updateHUD() {
-        if(TetrisBoard.isUpdated()){
-            this.HUD.repaint();  // Repaint the HUD to display the updates
+        if (TetrisBoard.isUpdated()) {
+            this.HUD.repaint();
             TetrisBoard.update();
         }
     }
 
-    public void Pause(){
+    /**
+     * Pauses the game and displays the pause menu.
+     */
+    public void Pause() {
         this.gameTimer.stop();
         this.TetrisBoard.pauseGame();
         drawPauseMenu();
     }
 
-    public void runGame(){
+    /**
+     * Starts the game and initializes the game loop.
+     */
+    public void runGame() {
         this.setVisible(true);
         gameTimer = new javax.swing.Timer(10, e -> {
-            if(!this.TetrisBoard.isGameOn()){
+            if (!this.TetrisBoard.isGameOn()) {
                 this.gameOver();
                 return;
             }
-            TetrisBoard.doFrame(); // Update game logic
-            TetrisBoard.repaint(); // Redraw the game board
+            TetrisBoard.doFrame();
+            TetrisBoard.repaint();
             updateHUD();
         });
         gameTimer.start();
     }
 
+    /**
+     * Saves the current game state to a file.
+     *
+     * @param filename The name of the file to save the game state to.
+     */
     public void saveGame(String filename) {
         File saveDir = new File(savePath);
         if (!saveDir.exists()) {
-            saveDir.mkdirs(); // Create the folder if it doesn't exist
+            saveDir.mkdirs();
         }
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filename))) {
-            oos.writeObject(TetrisBoard); // Serialize the game board
-            System.out.println("Game saved successfully.");
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(savePath + File.separator + filename))) {
+            oos.writeObject(TetrisBoard);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+    /**
+     * Loads a game state from a file.
+     *
+     * @param filename The name of the file containing the saved game state.
+     */
     public void loadGame(String filename) {
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filename))) {
             TetrisPanel loadedBoard = (TetrisPanel) ois.readObject();
             this.TetrisBoard = loadedBoard;
-            this.TetrisBoard.resumeGame(); // Restart the game thread
-            this.TetrisBoard.repaint(); // Redraw the board
-            this.add(TetrisBoard, BorderLayout.CENTER); // Reattach the board
-            System.out.println("Game loaded successfully.");
-        }catch (IOException | ClassNotFoundException e) {
+            TetrisBoard.initTrans();
+            this.TetrisBoard.resumeGame();
+            this.TetrisBoard.repaint();
+            this.add(TetrisBoard, BorderLayout.CENTER);
+        } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
 
-    public TetrisPanel getBoard(){
+    /**
+     * Gets the current game board.
+     *
+     * @return The {@link TetrisPanel} representing the game board.
+     */
+    public TetrisPanel getBoard() {
         return this.TetrisBoard;
     }
 
+    /**
+     * Gets the timer managing the game loop.
+     *
+     * @return The {@link javax.swing.Timer} managing the game loop.
+     */
+    public javax.swing.Timer getTimer() {
+        return gameTimer;
+    }
 }
