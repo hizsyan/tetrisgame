@@ -8,8 +8,9 @@ import java.io.*;
 import java.util.Random;
 
 /**
- * The main frame of the Tetris game. Manages the game board, HUD, 
- * game state, and user interactions.
+ * The main frame of the Tetris game. Displays the game board {@link TetrisPanel} and the HUD {@link TetrisHUD}.
+ * Handles the main game thread using {@link swing.Timer}, and  user input.
+ * Also has a {@link Random} random number generator to randomize the {@link Tetromino} coming in
  */
 public class GameFrame extends JFrame {
     private TetrisPanel TetrisBoard;
@@ -20,6 +21,7 @@ public class GameFrame extends JFrame {
 
     /**
      * Key listener for handling user input during the game.
+     * Arrows for controlling the Tetromino, Space to push it down and Esc to pause the game.
      */
     class MyKeyListener extends KeyAdapter {
         @Override
@@ -48,7 +50,7 @@ public class GameFrame extends JFrame {
 
     /**
      * Gets the random number generator used by the game.
-     *
+     * 
      * @return A {@link Random} instance.
      */
     public Random getRandom() {
@@ -57,6 +59,7 @@ public class GameFrame extends JFrame {
 
     /**
      * Initializes basic configurations for the game frame.
+     * The basics inits are in a method of their own so they can just be called when using multiple constructors.
      */
     public void initBasic() {
         random = new Random();
@@ -70,6 +73,7 @@ public class GameFrame extends JFrame {
 
     /**
      * Initializes and attaches the HUD to the game frame.
+     * Has to be called after TetrisBoard has been initialized.
      */
     public void initHUD() {
         this.HUD = new TetrisHUD(TetrisBoard);
@@ -78,7 +82,7 @@ public class GameFrame extends JFrame {
     }
 
     /**
-     * Constructs a new game frame with a fresh game board.
+     * Constructs a new game frame with a fresh game board. {@link TetrisPanel}
      */
     public GameFrame() {
         initBasic();
@@ -90,7 +94,7 @@ public class GameFrame extends JFrame {
 
     /**
      * Constructs a game frame by loading a previously saved game state.
-     *
+     * 
      * @param filename The name of the file containing the saved game state.
      */
     public GameFrame(String filename) {
@@ -103,6 +107,8 @@ public class GameFrame extends JFrame {
 
     /**
      * Resumes the game after being paused.
+     * Restarts the gameloop controlling swing Timer.
+     * Sets the board's state to active and restarts the Tetromino controlling thread.
      */
     public void resume() {
         this.gameTimer.start();
@@ -111,6 +117,7 @@ public class GameFrame extends JFrame {
 
     /**
      * Ends the game and displays a Game Over message.
+     * Displays the score that the game ended on.
      */
     private void gameOver() {
         this.gameTimer.stop();
@@ -130,7 +137,8 @@ public class GameFrame extends JFrame {
     }
 
     /**
-     * Displays the pause menu.
+     * Displays a pause menu (called from Pause after Esc key)
+     * Pause menu is a seperate window {@link PauseMenu}
      */
     public void drawPauseMenu() {
         PauseMenu PM = new PauseMenu(this);
@@ -146,6 +154,9 @@ public class GameFrame extends JFrame {
 
     /**
      * Updates the HUD based on changes in the game state.
+     * The Board {@link TetrisPanel} has an updated flag which helps us keep track
+     * If there has been a change to the Score or the next Tetromino in line we need to update the HUD {@link TetrisHUD}
+     * This is uself so we dont redraw the HUD on every frame.
      */
     public void updateHUD() {
         if (TetrisBoard.isUpdated()) {
@@ -155,7 +166,8 @@ public class GameFrame extends JFrame {
     }
 
     /**
-     * Pauses the game and displays the pause menu.
+     * Pauses the game and displays the pause menu.{@link PauseMenu}
+     * The menu has options to quit, save and quit or resume
      */
     public void Pause() {
         this.gameTimer.stop();
@@ -165,6 +177,8 @@ public class GameFrame extends JFrame {
 
     /**
      * Starts the game and initializes the game loop.
+     * The game loop is a swing Timer {@link javax.swing.Timer} which is perfect for a swing game with real time movement
+     * Using Timer makes sure everything is thread safe
      */
     public void runGame() {
         this.setVisible(true);
@@ -182,7 +196,7 @@ public class GameFrame extends JFrame {
 
     /**
      * Saves the current game state to a file.
-     *
+     * Called from the Pause menu's {@link PauseMenu} save menu
      * @param filename The name of the file to save the game state to.
      */
     public void saveGame(String filename) {
@@ -198,8 +212,8 @@ public class GameFrame extends JFrame {
     }
 
     /**
-     * Loads a game state from a file.
-     *
+     * Loads a gamestate from a file.  {@link TetrisPanel} 
+     * Called in the start window's {@link StartWindow} load game button 
      * @param filename The name of the file containing the saved game state.
      */
     public void loadGame(String filename) {
@@ -217,7 +231,6 @@ public class GameFrame extends JFrame {
 
     /**
      * Gets the current game board.
-     *
      * @return The {@link TetrisPanel} representing the game board.
      */
     public TetrisPanel getBoard() {

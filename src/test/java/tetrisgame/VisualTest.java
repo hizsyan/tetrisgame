@@ -88,7 +88,7 @@ public class VisualTest{
     }
 
     @Test
-    void testMoveRight() throws Exception {
+    void testMoveRight(){
         GameFrame gameFrame = new GameFrame();
         TetrisPanel panel = gameFrame.getBoard();
         Tetromino tetromino = panel.getCurrTetro();
@@ -107,7 +107,7 @@ public class VisualTest{
     }
 
     @Test
-    void testMoveLeft() throws Exception {
+    void testMoveLeft(){
         GameFrame gameFrame = new GameFrame();
         TetrisPanel panel = gameFrame.getBoard();
         Tetromino tetromino = panel.getCurrTetro();
@@ -124,7 +124,7 @@ public class VisualTest{
         // Verify tetromino moved right
         assertEquals(initialX - 1, tetromino.getTopleft().getX());
     }
-    
+
 
 }
 

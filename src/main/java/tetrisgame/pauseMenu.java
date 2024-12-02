@@ -6,7 +6,7 @@ import java.awt.event.*;
 
 /**
  * The PauseMenu class represents a menu that appears when the game is paused. 
- * It allows the player to resume, save, or quit the game.
+ * It allows the player to resume, save, or quit the game, all of these have their corresponding {@link JButton}
  */
 public class PauseMenu extends JFrame {
     private JButton Resume; // Button to resume the game
@@ -18,6 +18,7 @@ public class PauseMenu extends JFrame {
     /**
      * ActionListener for the Quit button.
      * Closes the game entirely.
+     * Also closes the PauseMenu.
      */
     private class QuitButton implements ActionListener {
         @Override
@@ -29,8 +30,8 @@ public class PauseMenu extends JFrame {
 
     /**
      * ActionListener for the Save & Quit button.
-     * Opens the save menu where the user can name and save the current game state.
-     */
+     * Opens the save menu where the user can name and save the current game state. {@link TetrisPanel}
+    */
     private class SQuitButton implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -65,7 +66,7 @@ public class PauseMenu extends JFrame {
     }
 
     /**
-     * Opens the save menu where the user can enter a save name and save the game state.
+     * Opens the save menu where the user can enter a save name and save the game state. {@link TetrisPanel}
      */
     public void saveMenu() {
         // Clear existing components
@@ -110,7 +111,7 @@ public class PauseMenu extends JFrame {
 
     /**
      * Constructs the PauseMenu and initializes its components.
-     *
+     * The menu has 3 buttons: Resume, Quit, Save and Quit
      * @param Game The {@link GameFrame} instance representing the main game.
      */
     public PauseMenu(GameFrame Game) {

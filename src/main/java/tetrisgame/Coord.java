@@ -3,7 +3,8 @@ package tetrisgame;
 import java.io.Serializable;
 
 /**
- * Represents a coordinate point in a 2D space with x and y values.
+ * Represents a coordinate point on a grid
+ * @author Hizsnyan Bálint
  */
 public class Coord implements Serializable {
     private int x;
@@ -11,6 +12,7 @@ public class Coord implements Serializable {
 
     /**
      * Creates a coordinate point with specified x and y values.
+     * Both x and y are integers as we are on a grid, they correspond to column and row
      *
      * @param xX The x-coordinate.
      * @param yY The y-coordinate.
@@ -22,7 +24,8 @@ public class Coord implements Serializable {
 
     /**
      * Creates a coordinate point from an array of two integers.
-     *
+     * This allows for increased compatibility with other code that might use a simple integer array to store grid coordinates.
+     * We just have to make sure the array has exactly two values.
      * @param vals An array containing x and y values.
      * @throws IllegalArgumentException If the array does not contain exactly two values.
     */
@@ -39,6 +42,7 @@ public class Coord implements Serializable {
     
     /**
      * Creates a coordinate point with default values (0, 0).
+     * Exists so we can use a default constructor and later set the coordinates.
      */
     public Coord() {
         x = 0;
@@ -46,7 +50,7 @@ public class Coord implements Serializable {
     }
 
     /**
-     * Gets the x-coordinate.
+     * Makes the private x-coordinate gettable from the outside
      *
      * @return The x-coordinate.
      */
@@ -55,7 +59,7 @@ public class Coord implements Serializable {
     }
 
     /**
-     * Gets the y-coordinate.
+     * Makes the private y-coordinate gettable from the outside
      *
      * @return The y-coordinate.
      */
@@ -64,7 +68,7 @@ public class Coord implements Serializable {
     }
 
     /**
-     * Sets the x-coordinate.
+     * Sets the x-coordinate to a specified value
      *
      * @param X The new x-coordinate value.
      */
@@ -73,7 +77,7 @@ public class Coord implements Serializable {
     }
 
     /**
-     * Sets the y-coordinate.
+     * Sets the y-coordinate to a specified value
      *
      * @param Y The new y-coordinate value.
      */
@@ -83,6 +87,7 @@ public class Coord implements Serializable {
 
     /**
      * Adjusts this coordinate to be relative to another coordinate.
+     * Could be useful for changing the origin of our grid, calculating distance etc.
      *
      * @param origin The origin coordinate to use as a reference.
      */
@@ -93,6 +98,7 @@ public class Coord implements Serializable {
 
     /**
      * Swaps the x and y values of this coordinate.
+     * Allows for smoother rotation, mirroring etc. operations
      */
     public void flip() {
         int buffy = this.y;
@@ -102,7 +108,7 @@ public class Coord implements Serializable {
 
     /**
      * Converts this coordinate to an array representation.
-     *
+     * Exists to improve compatibility with integer array based grid coordinate representation.
      * @return An array with the x and y values.
      */
     public int[] toArray() {
@@ -111,7 +117,7 @@ public class Coord implements Serializable {
 
     /**
      * Adds another coordinate's values to this coordinate.
-     *
+     * 
      * @param xy The coordinate to add.
      */
     public void add(Coord xy) {
@@ -121,7 +127,7 @@ public class Coord implements Serializable {
 
     /**
      * Increases the x-coordinate by the specified offset.
-     *
+     * Useful so when moving the point in the given direction, so we don't have to use setX(getX()+offset).
      * @param off The amount to increase the x-coordinate.
      */
     public void pushX(int off) {
@@ -130,7 +136,7 @@ public class Coord implements Serializable {
 
     /**
      * Increases the y-coordinate by the specified offset.
-     *
+     * Similiarly to pushX
      * @param off The amount to increase the y-coordinate.
      */
     public void pushY(int off) {
@@ -139,7 +145,7 @@ public class Coord implements Serializable {
 
     /**
      * Compares this coordinate with another object for equality.
-     *
+     * Useful for testing Coord equality without manually comparing both x and y.
      * @param o The object to compare.
      * @return True if the object is a Coord with the same x and y values; false otherwise.
      */

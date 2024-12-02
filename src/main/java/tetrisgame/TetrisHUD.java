@@ -5,7 +5,7 @@ import java.awt.*;
 
 /**
  * TetrisHUD is a graphical component that displays the current game status,
- * including the score and a preview of the next tetromino.
+ * including the score and a preview of the next tetromino to the current Game window {@link GameFrame}
  */
 public class TetrisHUD extends JPanel {
     private JLabel scoreLabel = new JLabel("Score: 0"); // Label to display the score
@@ -13,6 +13,7 @@ public class TetrisHUD extends JPanel {
 
     /**
      * Panel to display the next tetromino. It overrides paintComponent to render the tetromino.
+     * 
      */
     private JPanel nextTetrominoPanel = new JPanel() {
         @Override
@@ -34,7 +35,7 @@ public class TetrisHUD extends JPanel {
 
     /**
      * Paints the TetrisHUD component, updating the score and next tetromino display.
-     *
+     * Updating the HUD is controlled by a flag in the gamestate {@link TetrisPanel} that stores whether the information displayed needs updating
      * @param g The Graphics object used to render the component.
      */
     @Override
@@ -45,8 +46,8 @@ public class TetrisHUD extends JPanel {
     }
 
     /**
-     * Constructs the TetrisHUD with a reference to the Tetris game panel.
-     *
+     * Constructs the TetrisHUD with a reference to the Tetris game panel. {@link TetrisPanel}
+     * Needs access to the Tetris game in order to display the correct information
      * @param T The TetrisPanel object representing the game state.
      */
     public TetrisHUD(TetrisPanel T) {

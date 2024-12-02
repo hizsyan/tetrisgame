@@ -8,10 +8,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.*;
 
+
 /**
  * The TetrisPanel class represents the game board for a Tetris game.
- * It handles the rendering of the board, the current and next Tetromino,
+ * It handles the rendering of the board, the current and next Tetromino {@link Tetromino},
  * as well as game logic like clearing rows and detecting game over conditions.
+ * It also stores boolean flags representing whether it's paused or has been updated
  */
 public class TetrisPanel extends JPanel implements Serializable {
     protected TetrisSquare[][] Squares; // 2D array of squares representing the board
@@ -27,7 +29,8 @@ public class TetrisPanel extends JPanel implements Serializable {
     private transient boolean updated; // Whether the game state has been updated
 
     /**
-     * Initializes the 2D array of Tetris squares.
+     * Initializes the 2D array of Tetris squares. {@link TetrisSquare}
+     * 
      */
     private void initSquares() {
         for (int row = 0; row < 20; row++) {
@@ -66,8 +69,11 @@ public class TetrisPanel extends JPanel implements Serializable {
     }
 
     /**
-     * Paints the Tetris game board.
-     *
+     * Overriding the painCompononent method of the JPanel class
+     * We paint a filled square for every Tetris square {@link TetrisSquare} stored in the Board
+     * The squares are coloured to the {@link Color} of the corresponding Square
+     * The method also draws the lines of the grid after having drawn the squares.
+     * 
      * @param g The Graphics object used to render the board.
      */
     @Override
@@ -104,7 +110,9 @@ public class TetrisPanel extends JPanel implements Serializable {
     }
 
     /**
-     * Checks and clears full rows, updating the score.
+     * Checks and clears full rows.
+     * Uses the locked flag of the Squares {@link TetrisSquare} to identify the ones that are fixed in place
+     * If a row is full of locked squares, it calls the deleteRow method and updates the score
      */
     public void checkRows() {
         int counter = 0;
@@ -124,7 +132,7 @@ public class TetrisPanel extends JPanel implements Serializable {
 
     /**
      * Deletes a full row and shifts rows above it down.
-     *
+     * 
      * @param i The index of the row to delete.
      */
     public void deleteRow(int i) {
@@ -160,7 +168,8 @@ public class TetrisPanel extends JPanel implements Serializable {
     }
 
     /**
-     * Replaces the current Tetromino with the next one and generates a new next Tetromino.
+     * Replaces the current Tetromino with the next one and generates a new next Tetromino {@link Tetromino}.
+     * It sets the updated flag to true to indicate that the game window {@link GameFrame} the {@link TetrisHUD} needs updating
      */
     public void changeTetro() {
         currTetro = nextTetro;
@@ -169,7 +178,10 @@ public class TetrisPanel extends JPanel implements Serializable {
     }
 
     /**
-     * Advances the game frame by moving the Tetromino and checking rows.
+     * Advances the game frame 
+     * Checks for full rows every frame
+     * Checks for losing condition every frame
+     * Repaints the Board 
      */
     public void doFrame() {
         if (isLost()) {
@@ -184,7 +196,7 @@ public class TetrisPanel extends JPanel implements Serializable {
     }
 
     /**
-     * Moves the current Tetromino to the left.
+     * Moves the current Tetromino {@link Tetromino} to the left.
      */
     public void moveLeft() {
         this.currTetro.moveLeft();

@@ -6,10 +6,10 @@ import java.io.Serializable;
  * Represents the shape of a Tetromino in the Tetris game.
  * A TetroShape defines the relative coordinates of the blocks
  * and provides utilities for rotating and managing the shape.
+ * The shape is stored as a {@ling Coord} array where the coordinates represent where the Tetromino's squares are relative to its topleft square
  */
 public class TetroShape implements Serializable {
     private Coord[] relative; // Array of relative coordinates defining the shape
-    private boolean[][] absolute; // Absolute representation of the shape (optional usage)
 
     /**
      * Constructs a TetroShape using the index of a predefined shape.
@@ -20,11 +20,7 @@ public class TetroShape implements Serializable {
         int[][] shapeCoords = TetrisUtils.getShapeCoords(TetrisUtils.ShapeType.values()[i]);
         this.relative = new Coord[4];
         for (int j = 0; j < 4; j++) {
-            try {
-                this.relative[j] = new Coord(shapeCoords[j]);
-            } catch (Exception e) {
-                // Handle exception gracefully (shouldn't occur with valid shape definitions)
-            }
+            this.relative[j] = new Coord(shapeCoords[j]);
         }
     }
 
@@ -41,38 +37,9 @@ public class TetroShape implements Serializable {
     }
 
     /**
-     * Calculates the top-left corner of the absolute representation of the shape.
-     *
-     * @return A Coord object representing the top-left position.
-     */
-    private Coord calcTopLeft() {
-        for (int row = 0; row < 4; row++) {
-            for (int col = 0; col < 4; col++) {
-                if (this.absolute[row][col]) {
-                    return new Coord(row, col);
-                }
-            }
-        }
-        return new Coord(-1, -1); // Default if no valid top-left is found
-    }
-
-    /**
-     * Recalculates the relative coordinates of the shape based on the top-left corner.
-     */
-    private void calcRelative() {
-        Coord topleft = calcTopLeft();
-        for (int row = 0; row < 4; row++) {
-            for (int col = 0; col < 4; col++) {
-                Coord current = new Coord(row, col);
-                if (absolute[row][col] && !topleft.equals(current)) {
-                    this.relative[this.relative.length - 1] = current;
-                }
-            }
-        }
-    }
-
-    /**
      * Rotates the shape clockwise by transforming its relative coordinates.
+     * When rotating clockwise by 90 degrees offest on the x axis becomes the same offset on the y
+     * Offset on the y axis becomes the same magnitude but opposite direction offset on the x axis
      */
     public void rotateClock() {
         Coord[] newcoords = new Coord[4];
@@ -92,13 +59,6 @@ public class TetroShape implements Serializable {
     public Coord[] getRelative() {
         return relative;
     }
-
-    /**
-     * Retrieves the absolute representation of the shape.
-     *
-     * @return A 2D boolean array where true indicates a filled block.
-     */
-    public boolean[][] getAbsolute() {
-        return absolute;
-    }
 }
+
+

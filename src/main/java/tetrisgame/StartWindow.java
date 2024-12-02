@@ -7,7 +7,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 
 /**
- * The StartWindow class serves as the entry point for the Tetris game,
+ * The StartWindow class serves as the entry point for the Tetris game.
  * providing a menu to start a new game, load a saved game, or quit.
  */
 public class StartWindow extends JFrame {
@@ -41,7 +41,9 @@ public class StartWindow extends JFrame {
 
     /**
      * Opens a file chooser dialog to allow the user to select a saved game file
-     * and loads the game from the selected file.
+     * and loads the game from the selected file. 
+     * The loading is done with a special constructor of the {@link GameFrame} class which takes a path as an argument
+     * The {@link TetrisPanel} of the new GameFrame will be loaded from this path, if it exists and is a correct savefile.
      */
     public void loadGame() {
         // Show the file chooser dialog
@@ -83,7 +85,7 @@ public class StartWindow extends JFrame {
 
     /**
      * ActionListener for the New Game button.
-     * Starts a new Tetris game.
+     * Starts a new Tetris game window. {@link GameFrame}
      */
     public class StartButton implements ActionListener {
         @Override

@@ -5,7 +5,7 @@ import java.io.Serializable;
 
 /**
  * Represents a single square in the Tetris game grid.
- * Each square has a position, a color, and a lock state indicating if it is part of a locked Tetromino.
+ * Each square has a position, a color, and a bool lock state indicating if it is locked in place
  */
 public class TetrisSquare implements Serializable {
     private Coord position; // The position of the square on the grid
@@ -14,6 +14,7 @@ public class TetrisSquare implements Serializable {
 
     /**
      * Constructs a TetrisSquare at the specified position with the base color.
+     * The default state is unlocked, becuase the square is not occupied by a Tetromino when initialized
      *
      * @param xX The x-coordinate of the square.
      * @param yY The y-coordinate of the square.
@@ -36,7 +37,7 @@ public class TetrisSquare implements Serializable {
 
     /**
      * Sets the y-coordinate of the square.
-     *
+     * We define seperate setters and getters for better readability, instead of calling square.getPosition().setY()
      * @param y The new y-coordinate.
      */
     public void setY(int y) {
@@ -71,8 +72,8 @@ public class TetrisSquare implements Serializable {
     }
 
     /**
-     * Gets the color of the square.
-     *
+     * Gets the color of the square. 
+     * 
      * @return The current color of the square.
      */
     public Color getColor() {
@@ -82,7 +83,7 @@ public class TetrisSquare implements Serializable {
     /**
      * Sets the color of the square.
      *
-     * @param c The new color.
+     * @param c The new color. {@link Color}
      */
     public void setColor(Color c) {
         color = c;
@@ -91,7 +92,7 @@ public class TetrisSquare implements Serializable {
     /**
      * Gets the position of the square.
      *
-     * @return The position as a Coord object.
+     * @return The position as a Coord object. {@link Coord}
      */
     public Coord getPosition() {
         return this.position;
@@ -107,14 +108,14 @@ public class TetrisSquare implements Serializable {
     }
 
     /**
-     * Locks the square, indicating it is part of a completed line or Tetromino.
+     * Locks the square, indicating it is locked in place, has been placed down
      */
     public void lock() {
         this.locked = true;
     }
 
     /**
-     * Unlocks the square, making it available for new Tetrominoes.
+     * Unlocks the square
      */
     public void unlock() {
         this.locked = false;
