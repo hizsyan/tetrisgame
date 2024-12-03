@@ -8,8 +8,17 @@ import java.io.Serializable;
  * Each square has a position, a color, and a bool lock state indicating if it is locked in place
  */
 public class TetrisSquare implements Serializable {
-    private Coord position; // The position of the square on the grid
-    private Color color; // The color of the square
+    /**
+     * The position of the square on the grid
+     */
+    private Coord position; 
+    /**
+     * The color of the square
+     */
+    private Color color; 
+    /**
+     * Whether the square is locked (part of a completed line or Tetromino)
+     */
     private boolean locked; // Whether the square is locked (part of a completed line or Tetromino)
 
     /**

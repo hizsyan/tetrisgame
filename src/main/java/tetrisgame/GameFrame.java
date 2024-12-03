@@ -9,7 +9,7 @@ import java.util.Random;
 
 /**
  * The main frame of the Tetris game. Displays the game board {@link TetrisPanel} and the HUD {@link TetrisHUD}.
- * Handles the main game thread using {@link swing.Timer}, and  user input.
+ * Handles the main game thread using {@link javax.swing.Timer}, and  user input.
  * Also has a {@link Random} random number generator to randomize the {@link Tetromino} coming in
  */
 public class GameFrame extends JFrame {

@@ -1,0 +1,46 @@
+@options
+@packages
+-encoding
+'UTF-8'
+-protected
+--release
+17
+-sourcepath
+'C:/Users/hizsn/BME_1/3/prog/NHF/tetris/src/main/java'
+-author
+-bottom
+'Copyright &#169; 2024. All rights reserved.'
+-charset
+'UTF-8'
+-d
+'C:/Users/hizsn/BME_1/3/prog/NHF/tetris/target/site/apidocs'
+-docencoding
+'UTF-8'
+-doctitle
+'tetris 1.0-SNAPSHOT API'
+-use
+-version
+-windowtitle
+'tetris 1.0-SNAPSHOT API'
+tetrisgame
+C:\Users\hizsn\BME_1\3\prog\NHF\tetris\src\main\java = 1731933456490
+C:\Users\hizsn\BME_1\3\prog\NHF\tetris\target\site\apidocs\allclasses-index.html = 1733185470584
+C:\Users\hizsn\BME_1\3\prog\NHF\tetris\target\site\apidocs\allpackages-index.html = 1733185470584
+C:\Users\hizsn\BME_1\3\prog\NHF\tetris\target\site\apidocs\copy.svg = 1733185470641
+C:\Users\hizsn\BME_1\3\prog\NHF\tetris\target\site\apidocs\element-list = 1733185470376
+C:\Users\hizsn\BME_1\3\prog\NHF\tetris\target\site\apidocs\help-doc.html = 1733185470638
+C:\Users\hizsn\BME_1\3\prog\NHF\tetris\target\site\apidocs\index-all.html = 1733185470609
+C:\Users\hizsn\BME_1\3\prog\NHF\tetris\target\site\apidocs\index.html = 1733185470625
+C:\Users\hizsn\BME_1\3\prog\NHF\tetris\target\site\apidocs\link.svg = 1733185470641
+C:\Users\hizsn\BME_1\3\prog\NHF\tetris\target\site\apidocs\member-search-index.js = 1733185470592
+C:\Users\hizsn\BME_1\3\prog\NHF\tetris\target\site\apidocs\module-search-index.js = 1733185470584
+C:\Users\hizsn\BME_1\3\prog\NHF\tetris\target\site\apidocs\overview-tree.html = 1733185470538
+C:\Users\hizsn\BME_1\3\prog\NHF\tetris\target\site\apidocs\package-search-index.js = 1733185470584
+C:\Users\hizsn\BME_1\3\prog\NHF\tetris\target\site\apidocs\script.js = 1733185470641
+C:\Users\hizsn\BME_1\3\prog\NHF\tetris\target\site\apidocs\search-page.js = 1733185470649
+C:\Users\hizsn\BME_1\3\prog\NHF\tetris\target\site\apidocs\search.html = 1733185470625
+C:\Users\hizsn\BME_1\3\prog\NHF\tetris\target\site\apidocs\search.js = 1733185470641
+C:\Users\hizsn\BME_1\3\prog\NHF\tetris\target\site\apidocs\serialized-form.html = 1733185470440
+C:\Users\hizsn\BME_1\3\prog\NHF\tetris\target\site\apidocs\stylesheet.css = 1733185470641
+C:\Users\hizsn\BME_1\3\prog\NHF\tetris\target\site\apidocs\tag-search-index.js = 1733185470592
+C:\Users\hizsn\BME_1\3\prog\NHF\tetris\target\site\apidocs\type-search-index.js = 1733185470592

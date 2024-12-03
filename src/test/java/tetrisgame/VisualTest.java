@@ -3,6 +3,7 @@ import org.junit.jupiter.api.Test;
 import java.awt.event.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -26,6 +27,7 @@ public class VisualTest{
         System.setProperty("java.awt.headless", "true");
     }
 
+    @Test
     void testTetrisPanelInitialization() {
         TetrisPanel panel = new TetrisPanel(new GameFrame());
 
@@ -123,6 +125,39 @@ public class VisualTest{
 
         // Verify tetromino moved right
         assertEquals(initialX - 1, tetromino.getTopleft().getX());
+    }
+
+    @Test 
+    void testRotate(){
+        TetrisPanel panel = new TetrisPanel(null);
+        Tetromino tetromino = new Tetromino(1, 5, panel); // ShapeType.I
+        TetroShape copy = new TetroShape(tetromino.getShape());
+        assertTrue(tetromino.canRotate());
+        tetromino.rotate();
+        this.waitForEDT();
+        assertNotEquals(copy.getRelative(), tetromino.getShape().getRelative());
+    }
+
+    @Test 
+    void testPushDown(){
+        TetrisPanel panel = new TetrisPanel(null);
+        Tetromino tetromino = new Tetromino(1, 5, panel);
+        assertFalse(tetromino.isStopped((new int[]{0,0}), tetromino.getTopleft()));
+        tetromino.pushDown();
+        this.waitForEDT();
+        assertEquals(panel.getSquareHeight(), tetromino.getTopleft().getY()+tetromino.getHeight());
+    }
+
+    @Test
+    void testRowDeletion() {
+        TetrisPanel panel = new TetrisPanel(null);
+        // Fill a row completely
+        for (int col = 0; col <= panel.getSquareWidth(); col++) {
+            panel.getSquares()[19][col].lock();
+        }
+        panel.checkRows();
+        this.waitForEDT();
+        assertFalse(panel.getSquares()[19][0].isLocked()); // Top row should be cleared
     }
 
 

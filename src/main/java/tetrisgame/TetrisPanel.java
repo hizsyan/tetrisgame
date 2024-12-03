@@ -16,17 +16,65 @@ import java.util.*;
  * It also stores boolean flags representing whether it's paused or has been updated
  */
 public class TetrisPanel extends JPanel implements Serializable {
-    protected TetrisSquare[][] Squares; // 2D array of squares representing the board
-    protected transient Color base; // Base color for unoccupied squares
-    protected Tetromino currTetro; // The currently active Tetromino
-    protected Tetromino nextTetro; // The next Tetromino to be dropped
-    private transient Random R; // Random number generator for Tetromino selection
-    private int squareWidth; // Width of the board in squares
-    private int squareHeight; // Height of the board in squares
-    private int score; // The player's current score
-    private boolean gameOn; // Whether the game is currently active
-    private transient boolean paused; // Whether the game is paused
-    private transient boolean updated; // Whether the game state has been updated
+   /**
+ * A 2D array of squares representing the Tetris game board.
+ */
+protected TetrisSquare[][] Squares;
+
+/**
+ * The base color for unoccupied squares on the board.
+ * Transient to avoid being serialized.
+ */
+protected transient Color base;
+
+/**
+ * The currently active Tetromino being controlled by the player.
+ */
+protected Tetromino currTetro;
+
+/**
+ * The next Tetromino that will appear on the board.
+ */
+protected Tetromino nextTetro;
+
+/**
+ * Random number generator for Tetromino selection.
+ * Transient to avoid being serialized.
+ */
+private transient Random R;
+
+/**
+ * The width of the Tetris board in terms of the number of squares.
+ */
+private int squareWidth;
+
+/**
+ * The height of the Tetris board in terms of the number of squares.
+ */
+private int squareHeight;
+
+/**
+ * The player's current score in the game.
+ */
+private int score;
+
+/**
+ * Flag indicating whether the game is currently active.
+ */
+private boolean gameOn;
+
+/**
+ * Flag indicating whether the game is currently paused.
+ * Transient to avoid being serialized.
+ */
+private transient boolean paused;
+
+/**
+ * Flag indicating whether the game state has been updated.
+ * Transient to avoid being serialized.
+ */
+private transient boolean updated;
+
 
     /**
      * Initializes the 2D array of Tetris squares. {@link TetrisSquare}
@@ -217,6 +265,7 @@ public class TetrisPanel extends JPanel implements Serializable {
     }
 
     /**
+     * The getter for the {@link TetrisSquare} grid of the Tetris game
      * @return The 2D array of Tetris squares.
      */
     public TetrisSquare[][] getSquares() {
@@ -224,6 +273,7 @@ public class TetrisPanel extends JPanel implements Serializable {
     }
 
     /**
+     * Getter for the currently in play Tetro of the game
      * @return The currently active Tetromino.
      */
     public Tetromino getCurrTetro() {
@@ -240,6 +290,7 @@ public class TetrisPanel extends JPanel implements Serializable {
     }
 
     /**
+     * Getter for the next in line Tetromino
      * @return The next Tetromino to be dropped.
      */
     public Tetromino getNextTetro() {
@@ -256,6 +307,7 @@ public class TetrisPanel extends JPanel implements Serializable {
     }
 
     /**
+     * The getter for the base color for the Tetris board
      * @return The base color for unoccupied squares.
      */
     public Color getBase() {
@@ -263,6 +315,7 @@ public class TetrisPanel extends JPanel implements Serializable {
     }
 
     /**
+     * The getter for the width of the Game board in squares as an integer
      * @return The width of the board in squares.
      */
     public int getSquareWidth() {
@@ -270,6 +323,7 @@ public class TetrisPanel extends JPanel implements Serializable {
     }
 
     /**
+     * Getter for the height of the Game board in squares as an integer
      * @return The height of the board in squares.
      */
     public int getSquareHeight() {
@@ -277,6 +331,7 @@ public class TetrisPanel extends JPanel implements Serializable {
     }
 
     /**
+     * Getter for the score of the tetris game
      * @return The player's current score.
      */
     public int getScore() {
@@ -284,6 +339,7 @@ public class TetrisPanel extends JPanel implements Serializable {
     }
 
     /**
+     * Getter for the on-state of the game
      * @return True if the game is active, false otherwise.
      */
     public boolean isGameOn() {
@@ -291,6 +347,7 @@ public class TetrisPanel extends JPanel implements Serializable {
     }
 
     /**
+     * Getter for the pause-state of the game
      * @return True if the game is paused, false otherwise.
      */
     public boolean isPaused() {
@@ -298,6 +355,7 @@ public class TetrisPanel extends JPanel implements Serializable {
     }
 
     /**
+     * Getter for the updated flag 
      * @return True if the game state has been updated, false otherwise.
      */
     public boolean isUpdated() {

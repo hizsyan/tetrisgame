@@ -10,15 +10,45 @@ import java.util.*;
  * A Tetromino consists of multiple squares and can move or rotate on the Tetris board.
  */
 public class Tetromino implements Serializable{
+    /**
+     * Boolean flag storing whether the Tetro is currently acitve in a Game instance
+     */
     private boolean active;
+    /**
+     * The ArrayList of {@link TetrisSquare} occupied by the Tetromino
+     */
     private ArrayList<TetrisSquare> squares;
+    /**
+     * The Color of the Tetromino
+     */
     private Color color;
+    /**
+     * The grid coordinates of the origin of the Tetromino
+     */
     private Coord topleft;
+    /**
+     * The shape of the Tetromino
+     */
     private TetroShape shape;
+    /**
+     * The leftward width of the Tetro relative to its origin in squares
+     */
     private int lWidth;
+    /**
+     * The rightward widht of the Tetro relative ot its origin in squares
+     */
     private int rWidth;
+    /**
+     * The height of the Tetromino in squares
+     */
     private int height;
+    /**
+     * The Tetris game the Tetromino is in
+     */
     private TetrisPanel TP;
+    /**
+     * The thread handling the downward movement of the Tetro
+     */
     private transient Thread moveThread;
 
     
@@ -61,6 +91,12 @@ public class Tetromino implements Serializable{
         squares = new ArrayList<>();
     }
 
+    /**
+     * Checking if the Tetromino is stopped by a locked square ({@link TetrisSquare})
+     * @param offset the direction we want to move the Tetro
+     * @param start The current origin of the tetro
+     * @return True if the Tetro is stopped, False otherwise
+     */
     public boolean isStopped(int[] offset, Coord start){
         for(Coord cord : this.shape.getRelative()){
             if(TP.getSquares()[start.getY()+cord.getY()+offset[1]][start.getX()+cord.getX()+offset[0]].isLocked()){ //if it hits a locked tetro it stops
@@ -70,6 +106,11 @@ public class Tetromino implements Serializable{
         return false;
     }
 
+    /**
+     * Checks if the Tetromino can be rotated 90 degrees clockwise
+     * Copies the shape of the Tetromino and checks if the rotated shape with the same origin would be out of bounds or collide with a locked square {@link TetrisSquare} 
+     * @return True if rotating the Tetro can be done without illegal behaviour, False if not
+     */
     public boolean canRotate() {
         TetroShape rotatedShape = new TetroShape(shape); // Clone the current shape
         rotatedShape.rotateClock(); // Apply rotation to the copy
@@ -93,6 +134,10 @@ public class Tetromino implements Serializable{
         return true; // All checks passed
     }
 
+    /**
+     * Stops the thread handling the downward movement of the Tetromino
+     * Sets the active flag to false
+     */
     public void stopMovementThread() {
         active = false;
         if (moveThread != null) {
@@ -100,6 +145,10 @@ public class Tetromino implements Serializable{
         }
     }
 
+    /**
+     * Sets the locked flag of the squares ({@link TetrisSquare}) occupied by the Tetromini
+     * This makes it so its a locked in place element of the Board
+     */
     public void lockTetro(){
         for(TetrisSquare square : this.squares){
             square.lock();
@@ -109,6 +158,11 @@ public class Tetromino implements Serializable{
         TP.changeTetro();
     }
 
+    /**
+     * Calculate the width of the Tetromino to the left relative to its origin (topleft)
+     * @param shape
+     * @return the leftward width of the Tetromino as an integer
+     */
     private int calcLwidth(Coord[] shape){
         int min = 0;
         for(Coord cord : shape){
@@ -117,6 +171,11 @@ public class Tetromino implements Serializable{
         return -min;
     } 
 
+    /**
+     * Calculate the width of the Tetromino to the right relative to its origin (topleft)
+     * @param shape
+     * @return the rightward with of the Tetromino as an integer
+     */
     private int calcRwidth(Coord[] shape){
         int max = 0;
         for(Coord cord : shape){
@@ -125,6 +184,11 @@ public class Tetromino implements Serializable{
         return max;
     }
 
+    /**
+     * Calculate how "tall" a Tetromino is
+     * @param shape The shape of the Tetromino 
+     * @return the height in squares of the Tetro as an integer
+     */
     private int calcheight(Coord[] shape){
         int max = 0;
         for(Coord cord : shape){
@@ -133,12 +197,20 @@ public class Tetromino implements Serializable{
         return max;
     }
 
+    /**
+     * Activates the Tetro
+     * Allows for storing Tetrominos without them being moved down/in the game
+     */
     public void activate(){
         this.active = true;
         this.setSquares();
         startMovementThread();
     }
 
+    /**
+     * Assigns the squares ({@link TetrisSquare}) occupied by this Tetromino
+     * Called at initialization and whenever the Tetromino placement is changed
+     */
     private void setSquares(){
         for(Coord cord:shape.getRelative()){
             TetrisSquare TS = TP.getSquares()[topleft.getY()+cord.getY()][topleft.getX()+cord.getX()];
@@ -147,14 +219,27 @@ public class Tetromino implements Serializable{
         }
     }
 
+    /**
+     * 
+     * @param i the int corresponding to the Tetromino
+     * @return the Color of the shape from the {@link TetrisUtils} helper class
+     */
     private Color colorPicker(int i){
         return TetrisUtils.getColorForShape(ShapeType.values()[i]);
     }
 
+    /**
+     * Creates a new shape ({@link TetroShape})
+     * @param i the integer corresponding to the shape/kind of the Tetromino (7 possible)
+     */
     private void shapePicker(int i){
         this.shape = new TetroShape(i); 
     }
     
+    /**
+     * Clears the Squares ({@link TetrisSquare}) occupied by the Tetromino
+     * Called whenever the placing of the Tetro is changed, moved/rotated
+     */
     private void clearSquares(){
         for(TetrisSquare T:squares){
             T.setColor(TP.getBase());
@@ -162,8 +247,14 @@ public class Tetromino implements Serializable{
         this.squares.clear();
     }   
 
-
-      public void moveDown() {
+    /**
+     * Moves the current {@link Tetromino} down by one
+     * First check if moving down is in bounds and whether it collides with a locked square
+     * If can move down push the origin (topleft) {@link Coord} of the Tetro down by one
+     * Reassign the squares {@link TetrisSquare} occupied by the Tetro according to the new origin
+     * If can't be moved further down, lock the Squares of the Tetro
+     */
+    public void moveDown() {
         int[] off = {0,1};
         if(this.topleft.getY()+height==TP.getSquareHeight() || (isStopped(off, this.topleft))){
             this.lockTetro();
@@ -177,7 +268,12 @@ public class Tetromino implements Serializable{
             }
         );
     }
-
+    /** 
+     * Moves the Tetromino to the right by one column
+     * Wrapped in invokelater
+     * Checks if moving right is in bounds or stopped by a locked square
+     * If moving left is possible do it, reassign sqaures {@link TetrisSquare}
+     */
     public void moveRight(){
         int[] off = {1,0};
         SwingUtilities.invokeLater(()->{
@@ -194,6 +290,12 @@ public class Tetromino implements Serializable{
         );
     }
 
+    /**
+     * Moves the Tetromino to the left by one column
+     * Wrapped in invokelater
+     * Checks if moving left is in bounds or stopped by a locked square
+     * If moving left is possible do it, reassign sqaures {@link TetrisSquare}
+     */
     public void moveLeft(){
         int[] off = {-1,0};
         SwingUtilities.invokeLater(()->{
@@ -210,6 +312,14 @@ public class Tetromino implements Serializable{
         );
     }
 
+
+    /**
+     * Pushes the Tetro down as far as possible
+     * First we copy the the origin coordinate, and then simulate dropping it down by 1 row while as long as it doesnt hit the bottom or a locked tetro
+     * After we find the lowest possible coordinate we set this for the Tetro
+     * Height, width and occupied squares need to be recalculated aswell.
+     * The part of the method that modifies data is wrapped in invokLater to keep it thread safe
+     */
     public void pushDown(){
         Coord cordcopy = this.topleft;
         int[] off = new int[]{0,1};

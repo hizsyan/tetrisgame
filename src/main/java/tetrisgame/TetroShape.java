@@ -6,9 +6,12 @@ import java.io.Serializable;
  * Represents the shape of a Tetromino in the Tetris game.
  * A TetroShape defines the relative coordinates of the blocks
  * and provides utilities for rotating and managing the shape.
- * The shape is stored as a {@ling Coord} array where the coordinates represent where the Tetromino's squares are relative to its topleft square
+ * The shape is stored as a {@link Coord} array where the coordinates represent where the Tetromino's squares are relative to its topleft square
  */
 public class TetroShape implements Serializable {
+    /**
+     * Array of relative coordinates defining the shape
+     */
     private Coord[] relative; // Array of relative coordinates defining the shape
 
     /**
